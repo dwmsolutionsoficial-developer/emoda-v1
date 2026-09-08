@@ -1,0 +1,71 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "axios": "0.18.0",
+    "bootstrap-vue": "2.0.0-rc.11",
+    "di-vue-mask": "^1.1.0",
+    "font-awesome": "4.7.0",
+    "highlightjs": "9.10.0",
+    "jspdf": "^1.5.3",
+    "liquor-tree": "0.2.32",
+    "mdbvue": "^6.5.0",
+    "moment": "^2.24.0",
+    "numeral": "^2.0.6",
+    "v-money": "^0.8.1",
+    "vue": "2.5.17",
+    "vue-currency-input": "^1.15.1",
+    "vue-filter-number-format": "^2.0.0",
+    "vue-gravatar": "1.2.1",
+    "vue-moment": "^4.1.0",
+    "vue-money": "^0.4.1",
+    "vue-mq": "0.2.1",
+    "vue-numeric": "^2.3.0",
+    "vue-router": "3.0.1",
+    "vue-search-select": "^2.9.3",
+    "vue-select": "^3.4.0",
+    "vue-simple-search-dropdown": "^1.0.1",
+    "vue-the-mask": "^0.11.1",
+    "vue-toasted": "1.1.24",
+    "vue2-editor": "^2.10.2",
+    "vuex": "3.0.1",
+    "winser": "^1.0.3"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "3.0.1",
+    "@vue/cli-plugin-eslint": "3.0.1",
+    "@vue/cli-service": "3.0.1",
+    "node": "^16.0.0",
+    "vue-template-compiler": "2.5.17"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}

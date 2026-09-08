@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./backend
+    container_name: emoda-v1-backend
+    restart: always
+    ports:
+      # HOST_PORT evita conflito com outra instância na 4000
+      - "${HOST_PORT:-4001}:4000"
+    env_file: .env
+    environment:
+      TZ: America/Sao_Paulo
+    networks:
+      - emoda-v1-net
+
+networks:
+  emoda-v1-net:
+    driver: bridge

@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  backend:
+    name: Backend (lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: npm
+          cache-dependency-path: emoda-backend/package-lock.json
+
+      - name: Instalar dependências
+        working-directory: emoda-backend
+        run: npm ci
+
+      # Informativo: o código legado ainda não passa limpo no eslint:recommended,
+      # então o lint não bloqueia o merge.
+      - name: Lint
+        working-directory: emoda-backend
+        continue-on-error: true
+        run: npm run lint
+
+  frontend:
+    name: Frontend (build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Vue CLI 3 + webpack 4 quebram com o OpenSSL 3 do Node 18+.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: yarn
+          cache-dependency-path: emoda-frontend/yarn.lock
+
+      - name: Instalar dependências
+        working-directory: emoda-frontend
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        working-directory: emoda-frontend
+        run: yarn build

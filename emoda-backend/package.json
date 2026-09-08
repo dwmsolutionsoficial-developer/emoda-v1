@@ -1,0 +1,38 @@
+{
+  "name": "backend-emoda",
+  "version": "1.0.1",
+  "description": "Servidor E-Moda",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon",
+    "install-windows-service": "winser -i",
+    "unistall-windows-service": "winser -r",
+    "lint": "eslint .",
+    "migrate": "knex migrate:latest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "1.18.3",
+    "consign": "0.1.6",
+    "cors": "2.8.4",
+    "dateformat": "^3.0.3",
+    "express": "4.16.3",
+    "fs": "0.0.1-security",
+    "jwt-simple": "^0.5.6",
+    "knex": "0.15.2",
+    "moment": "^2.22.2",
+    "mysql": "^2.17.1",
+    "passport": "0.4.0",
+    "passport-jwt": "4.0.0",
+    "pm2": "3.0.4",
+    "winser": "^1.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "nodemon": "1.18.4"
+  }
+}

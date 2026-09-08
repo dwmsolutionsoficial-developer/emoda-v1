@@ -1,0 +1,50 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'emoda-frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Vue CLI 3 + webpack 4 quebram com o OpenSSL 3 do Node 18+.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: yarn
+          cache-dependency-path: emoda-frontend/yarn.lock
+
+      - name: Instalar dependências e gerar build
+        working-directory: emoda-frontend
+        env:
+          VUE_APP_API_URL: ${{ vars.VUE_APP_API_URL }}
+        run: yarn install --frozen-lockfile && yarn build
+
+      - name: Copiar build para o servidor
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "emoda-frontend/dist/"
+          target: "/apps/emoda-v1/frontend"
+          strip_components: 2
+
+      - name: Recarregar Nginx
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: sudo systemctl reload nginx
