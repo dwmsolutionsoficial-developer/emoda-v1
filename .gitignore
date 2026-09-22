@@ -26,3 +26,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# Dumps de banco (dados de clientes — nunca versionar)
+*.sql

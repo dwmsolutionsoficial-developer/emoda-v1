@@ -55,7 +55,7 @@ Foram usados defaults para não colidir com o e-moda que já roda no servidor �
 troque se o seu cenário for outro:
 
 - diretório `/apps/emoda-v1` (workflows, compose, nginx, setup)
-- porta publicada no host `HOST_PORT=4001` (dentro do container continua 4000)
+- porta publicada no host `HOST_PORT=4002` (dentro do container continua 4000)
 - domínio `www.emodaapp.com.br` (nginx + `FRONTEND_URL` + `VUE_APP_API_URL`)
 
 ## Configuração da aplicação

@@ -4,8 +4,8 @@ services:
     container_name: emoda-v1-backend
     restart: always
     ports:
-      # HOST_PORT evita conflito com outra instância na 4000
-      - "${HOST_PORT:-4001}:4000"
+      # 4000 (e-moda) e 4001 (e-clinica) já estão em uso no servidor
+      - "${HOST_PORT:-4002}:4000"
     env_file: .env
     environment:
       TZ: America/Sao_Paulo

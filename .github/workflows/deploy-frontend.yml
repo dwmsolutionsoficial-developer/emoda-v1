@@ -23,6 +23,10 @@ jobs:
           cache: yarn
           cache-dependency-path: emoda-frontend/yarn.lock
 
+      # file-saver está travado no yarn.lock via git+ssh; o runner não tem chave SSH do GitHub.
+      - name: Usar HTTPS para dependências vindas do git
+        run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+
       - name: Instalar dependências e gerar build
         working-directory: emoda-frontend
         env:

@@ -30,14 +30,14 @@ echo "==> Criando $APP_DIR/.env com valores base..."
 cat > $APP_DIR/.env << 'ENVEOF'
 AMBIENTE=PROD
 PORT=4000
-HOST_PORT=4001
+HOST_PORT=4002
 FRONTEND_URL=https://www.emodaapp.com.br
 
 DB_HOST=172.31.0.6
 DB_PORT=3306
 DB_USER=root
 DB_PASS=SUBSTITUIR
-DB_NAME=emoda
+DB_NAME=emodav1
 
 DB_SSL=false
 DB_SSL_CA=/app/certs/global-bundle.pem
@@ -56,7 +56,7 @@ services:
     container_name: emoda-v1-backend
     restart: always
     ports:
-      - "${HOST_PORT:-4001}:4000"
+      - "${HOST_PORT:-4002}:4000"
     env_file: .env
     environment:
       TZ: America/Sao_Paulo
