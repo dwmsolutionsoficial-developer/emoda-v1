@@ -72,10 +72,29 @@ como `/api` — mesma origem do site, então a virada de DNS ou troca de domíni
 rebuild. Não injete essa variável pelo workflow: uma variable vazia do GitHub sobrescreve
 o `.env.production` e o bundle sai apontando para `localhost:4000`.
 
+## Restaurar um dump
+
+Envie o `.sql`/`.sql.gz` para `/apps/emoda-v1/` e rode `scripts/restore-db.sh` no servidor.
+Dumps tirados do RDS trazem quatro linhas que exigem privilégio SUPER
+(`SET @@SESSION.SQL_LOG_BIN`, `SET @@GLOBAL.GTID_PURGED`) e falham em um MySQL comum —
+remova-as antes:
+
+```bash
+grep -vE "^SET @MYSQLDUMP_TEMP_LOG_BIN|^SET @@SESSION\.SQL_LOG_BIN|^SET @@GLOBAL\.GTID_PURGED" \
+  Base.sql | gzip > Base-restore.sql.gz
+```
+
+O dump não tem `CREATE DATABASE` nem `USE`, então ele entra em qualquer banco de destino —
+é assim que os dados do `emoda` foram para o `emodav1` sem renomear nada.
+
 ## Notas do stack legado
 
 - **Node 16** em todo lugar (imagem e runners): `vue-cli-service` 3 / webpack 4 não
   sobem no OpenSSL 3 do Node 18+, e `knex` 0.15 / `mysql` 2.x são da mesma época.
+- **Cifrão na senha do banco**: o Compose interpola o `env_file`, então `$` inicia uma
+  variável e o caractere seguinte some — o container recebia a senha truncada e o MySQL
+  respondia `ER_ACCESS_DENIED_ERROR` mesmo com a senha certa no arquivo. Dobre o cifrão
+  no `.env` (`ab$cd` → `ab$$cd`).
 - O driver `mysql` 2.x não fala `caching_sha2_password`. Em MySQL 8, o usuário da
   aplicação precisa de `ALTER USER ... IDENTIFIED WITH mysql_native_password`.
 - O `vue-cli-service build` termina o build mas **não encerra o processo** no runner do
