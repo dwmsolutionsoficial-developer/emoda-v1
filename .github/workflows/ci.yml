@@ -10,6 +10,7 @@ jobs:
   backend:
     name: Backend (lint)
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
 
@@ -33,6 +34,7 @@ jobs:
   frontend:
     name: Frontend (build)
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
 
@@ -47,10 +49,14 @@ jobs:
       - name: Usar HTTPS para dependências vindas do git
         run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 
-      - name: Instalar dependências
+      # O vue-cli-service 3 conclui o build mas não encerra o processo no runner
+      # (o step ficava pendurado após "Build complete"). Por isso o timeout com
+      # verificação do artefato: só passa se o dist foi realmente gerado.
+      - name: Instalar dependências e gerar build
         working-directory: emoda-frontend
-        run: yarn install --frozen-lockfile
-
-      - name: Build
-        working-directory: emoda-frontend
-        run: yarn build
+        run: |
+          yarn install --frozen-lockfile
+          timeout 900 yarn build; code=$?
+          if [ $code -ne 0 ] && [ $code -ne 124 ]; then exit $code; fi
+          test -f dist/index.html || { echo "::error::build não gerou dist/index.html"; exit 1; }
+          echo "build ok"

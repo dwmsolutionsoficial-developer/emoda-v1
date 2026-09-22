@@ -11,6 +11,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -27,11 +28,17 @@ jobs:
       - name: Usar HTTPS para dependências vindas do git
         run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 
+      # O vue-cli-service 3 conclui o build mas não encerra o processo no runner
+      # (o step ficava pendurado após "Build complete"). Por isso o timeout com
+      # verificação do artefato: só passa se o dist foi realmente gerado.
       - name: Instalar dependências e gerar build
         working-directory: emoda-frontend
-        env:
-          VUE_APP_API_URL: ${{ vars.VUE_APP_API_URL }}
-        run: yarn install --frozen-lockfile && yarn build
+        run: |
+          yarn install --frozen-lockfile
+          timeout 900 yarn build; code=$?
+          if [ $code -ne 0 ] && [ $code -ne 124 ]; then exit $code; fi
+          test -f dist/index.html || { echo "::error::build não gerou dist/index.html"; exit 1; }
+          echo "build ok"
 
       - name: Copiar build para o servidor
         uses: appleboy/scp-action@v0.1.7

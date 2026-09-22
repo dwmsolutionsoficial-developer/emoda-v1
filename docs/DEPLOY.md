@@ -45,7 +45,6 @@ pull request → ci.yml (lint do backend + build do frontend)
    | Secret   | `SSH_PORT`        | `4100`                                         |
    | Secret   | `SSH_USER`        | `admin`                                        |
    | Secret   | `SSH_PRIVATE_KEY` | chave impressa pelo `setup-server.sh`          |
-   | Variable | `VUE_APP_API_URL` | `https://www.emodaapp.com.br/api`     |
 
 5. Dispare os dois workflows manualmente (**Actions → Run workflow**) no primeiro deploy.
 
@@ -68,7 +67,10 @@ Variáveis: `PORT`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`,
 `JWT_SECRET`, e opcionalmente `DB_SSL` / `DB_SSL_CA` (o `global-bundle.pem` da AWS
 está em `emoda-backend/certs/` e vai junto na imagem).
 
-O frontend lê `VUE_APP_API_URL` em tempo de build; sem ela, usa `http://localhost:4000`.
+O frontend lê `VUE_APP_API_URL` em tempo de build, fixada em `emoda-frontend/.env.production`
+como `/api` — mesma origem do site, então a virada de DNS ou troca de domínio não exige
+rebuild. Não injete essa variável pelo workflow: uma variable vazia do GitHub sobrescreve
+o `.env.production` e o bundle sai apontando para `localhost:4000`.
 
 ## Notas do stack legado
 
@@ -76,5 +78,8 @@ O frontend lê `VUE_APP_API_URL` em tempo de build; sem ela, usa `http://localho
   sobem no OpenSSL 3 do Node 18+, e `knex` 0.15 / `mysql` 2.x são da mesma época.
 - O driver `mysql` 2.x não fala `caching_sha2_password`. Em MySQL 8, o usuário da
   aplicação precisa de `ALTER USER ... IDENTIFIED WITH mysql_native_password`.
+- O `vue-cli-service build` termina o build mas não encerra o processo no runner do
+  GitHub Actions. Os workflows usam `timeout 900` e validam `dist/index.html`, em vez de
+  esperar o processo sair.
 - As migrations rodam no start do container (`start.sh`) e também no boot do
   `config/db.js` — o knex é idempotente, então não há problema.
