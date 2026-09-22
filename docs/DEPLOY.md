@@ -6,7 +6,7 @@ backend em container Docker e frontend estático servido pelo Nginx do host.
 ```
 push em main
    ├── emoda-backend/**  → deploy-backend.yml  → scp → docker compose build/up
-   └── emoda-frontend/** → deploy-frontend.yml → yarn build → scp dist → reload nginx
+   └── emoda-frontend/** → deploy-frontend.yml → yarn build → scp dist → smoke test
 pull request → ci.yml (lint do backend + build do frontend)
 ```
 
@@ -48,14 +48,19 @@ pull request → ci.yml (lint do backend + build do frontend)
 
 5. Dispare os dois workflows manualmente (**Actions → Run workflow**) no primeiro deploy.
 
-## Valores a revisar antes de subir
+## Produção (em 22/09/2026)
 
-Foram usados defaults para não colidir com o e-moda que já roda no servidor —
-troque se o seu cenário for outro:
+| Item | Valor |
+|---|---|
+| Domínio | `www.emodaapp.com.br` e o apex `emodaapp.com.br` (A → 170.150.135.190, DNS na Umbler) |
+| Servidor de aplicação | VM01 `170.150.135.190`, SSH na porta 4100, usuário `admin` |
+| Diretório | `/apps/emoda-v1` |
+| Container | `emoda-v1-backend`, host `4002` → container `4000` |
+| Banco | MySQL da VM02, `172.31.0.6:3306`, base `emodav1` |
+| Site Nginx | `/etc/nginx/sites-available/emoda-v1`, HTTPS via certbot (renovação automática) |
 
-- diretório `/apps/emoda-v1` (workflows, compose, nginx, setup)
-- porta publicada no host `HOST_PORT=4002` (dentro do container continua 4000)
-- domínio `www.emodaapp.com.br` (nginx + `FRONTEND_URL` + `VUE_APP_API_URL`)
+As portas 4000 (e-moda) e 4001 (e-clinica) já estavam ocupadas no servidor — daí a 4002.
+O IP de origem que o MySQL enxerga é o `172.31.0.5` (VM01), que é o host a usar no GRANT.
 
 ## Configuração da aplicação
 
