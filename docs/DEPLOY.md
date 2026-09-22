@@ -78,8 +78,9 @@ o `.env.production` e o bundle sai apontando para `localhost:4000`.
   sobem no OpenSSL 3 do Node 18+, e `knex` 0.15 / `mysql` 2.x são da mesma época.
 - O driver `mysql` 2.x não fala `caching_sha2_password`. Em MySQL 8, o usuário da
   aplicação precisa de `ALTER USER ... IDENTIFIED WITH mysql_native_password`.
-- O `vue-cli-service build` termina o build mas não encerra o processo no runner do
-  GitHub Actions. Os workflows usam `timeout 900` e validam `dist/index.html`, em vez de
-  esperar o processo sair.
+- O `vue-cli-service build` termina o build mas **não encerra o processo** no runner do
+  GitHub Actions, o que pendurava o step. Por isso os workflows chamam
+  `scripts/build-frontend.sh`, que aguarda o marcador "Build complete" no log,
+  encerra o processo e confere o `dist/index.html`.
 - As migrations rodam no start do container (`start.sh`) e também no boot do
   `config/db.js` — o knex é idempotente, então não há problema.
