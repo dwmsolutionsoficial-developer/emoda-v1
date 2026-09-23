@@ -1,6 +1,7 @@
 module.exports = (app) => {
   const { existsOrError, notExistsOrError } = app.api.validation;
   const dateFormat = require("dateformat");
+  const moment = require("moment");
   const fs = require("fs");
   const config = require("../knexfile.js");
   const knex = require("knex")(config);
@@ -289,7 +290,7 @@ module.exports = (app) => {
         cr_documento: consignado.con_documento,
         cli_id: dados[0].cli_id,
         cr_emissao: dados[0].con_data,
-        cr_vencimento: req.body.dataVencimento,
+        cr_vencimento: moment(req.body.dataVencimento).format("YYYY-MM-DD"),
         cr_valor: dados[0].con_total,
         cr_parcela: 1,
         usu_id: req.body.usuario,

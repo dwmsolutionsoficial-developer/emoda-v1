@@ -1,6 +1,7 @@
 module.exports = (app) => {
   const { existsOrError, notExistsOrError } = app.api.validation;
   const dateFormat = require("dateformat");
+  const moment = require("moment");
 
   const save = async (req, res) => {
     const consignado = {
@@ -105,7 +106,7 @@ module.exports = (app) => {
         cr_documento: consignado.con_documento,
         cli_id: consignado.cli_id,
         cr_emissao: consignado.con_data,
-        cr_vencimento: req.body.dataVencimento,
+        cr_vencimento: moment(req.body.dataVencimento).format("YYYY-MM-DD"),
         cr_valor: consignado.con_total,
         cr_parcela: 1,
         usu_id: consignado.usu_id,
